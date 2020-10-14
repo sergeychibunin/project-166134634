@@ -10,4 +10,4 @@ class Post(models.Model):
 class PostLike(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     like_type = models.BooleanField('Like is the true value')
-    datetime = models.DateTimeField('The date of a like')
+    datetime = models.DateTimeField('The date of a like', auto_now_add=True)

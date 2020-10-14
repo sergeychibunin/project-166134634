@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from core.models import Post
+from core.models import Post, PostLike
 from rest_framework import serializers
 
 
@@ -28,3 +28,9 @@ class PostSerializer(serializers.ModelSerializer):
             self.context['request'].user
         post.save()
         return post
+
+
+class PostLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostLike
+        fields = ('post_id', 'like')
