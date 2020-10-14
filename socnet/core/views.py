@@ -12,6 +12,6 @@ class UserCreate(generics.CreateAPIView):
     permission_classes = (AllowAny, )
 
 
-class PostCreate(generics.CreateAPIView):
+class PostCreate(generics.ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer

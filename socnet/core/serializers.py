@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ('body',)
+        fields = ('body', 'id')
     
     def create(self, validated_data):
         post = Post(**validated_data)
