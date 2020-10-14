@@ -20,7 +20,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
-from core.views import UserCreate, PostListCreate, PostLikeCreate
+from core.views import UserCreate, PostListCreate, PostLikeCreate, \
+    PostLikeAnalyticsList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,5 +30,6 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/user/signup/', UserCreate.as_view()),
     path('api/post/', PostListCreate.as_view()),
-    path('api/post/like/', PostLikeCreate.as_view())
+    path('api/post/like/', PostLikeCreate.as_view()),
+    path('api/analytics/', PostLikeAnalyticsList.as_view())
 ]

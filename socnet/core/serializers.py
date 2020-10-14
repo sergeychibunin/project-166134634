@@ -42,3 +42,13 @@ class PostLikeSerializer(serializers.ModelSerializer):
         like = PostLike(post=post, like_type=validated_data['like_type'])
         like.save()
         return like
+
+
+class PostLikeAnalyticsSerializer(serializers.ModelSerializer):
+    # date, post_id, likes, dislikes
+    date_from = serializers.DateField()
+    date_to = serializers.DateField()
+
+    class Meta:
+        model = PostLike
+        field = ('date_from', 'date_to')
