@@ -31,6 +31,14 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostLikeSerializer(serializers.ModelSerializer):
+    post_id = serializers.IntegerField(source='post.id')
+
     class Meta:
         model = PostLike
-        fields = ('post_id', 'like')
+        fields = ('post_id', 'like_type')
+
+    def create(self, validated_data):
+        post = Post.objects.get(pk=validated_data['post']['id'])
+        like = PostLike(post=post, like_type=validated_data['like_type'])
+        like.save()
+        return like
