@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from core.models import Post, PostLike
+from core.models import Post, PostLike, PostDislike
 from rest_framework import serializers
 
 
@@ -35,20 +35,31 @@ class PostLikeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostLike
-        fields = ('post_id', 'like_type')
+        fields = ('post_id',)
 
     def create(self, validated_data):
         post = Post.objects.get(pk=validated_data['post']['id'])
-        like = PostLike(post=post, like_type=validated_data['like_type'])
+        like = PostLike(post=post)
         like.save()
         return like
 
 
-class PostLikeAnalyticsSerializer(serializers.ModelSerializer):
-    # date, post_id, likes, dislikes
-    date_from = serializers.DateField()
-    date_to = serializers.DateField()
+class PostDislikeSerializer(serializers.ModelSerializer):
+    post_id = serializers.IntegerField(source='post.id')
 
     class Meta:
-        model = PostLike
-        field = ('date_from', 'date_to')
+        model = PostDislike
+        fields = ('post_id',)
+    
+    def create(self, validated_data):
+        post = Post.objects.get(pk=validated_data['post']['id'])
+        dislike = PostDislike(post=post)
+        dislike.save()
+        return dislike
+
+
+class PostLikeAnalyticsSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    post_id = serializers.IntegerField()
+    likes = serializers.IntegerField()
+    dislikes = serializers.IntegerField()

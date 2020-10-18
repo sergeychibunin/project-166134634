@@ -21,7 +21,7 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView
 )
 from core.views import UserCreate, PostListCreate, PostLikeCreate, \
-    PostLikeAnalyticsList
+    PostDislikeCreate, PostLikeAnalyticsList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,5 +31,6 @@ urlpatterns = [
     path('api/user/signup/', UserCreate.as_view()),
     path('api/post/', PostListCreate.as_view()),
     path('api/post/like/', PostLikeCreate.as_view()),
+    path('api/post/dislike/', PostDislikeCreate.as_view()),
     path('api/analytics/', PostLikeAnalyticsList.as_view())
 ]
