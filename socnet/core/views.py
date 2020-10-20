@@ -60,29 +60,31 @@ class PostLikeAnalyticsList(APIView):
             likes = likes_queryset.filter(datetime__date=d).values('datetime__date', 'post').annotate(total=Count('id'))
             dislikes = dislikes_queryset.filter(datetime__date=d).values('datetime__date', 'post').annotate(total=Count('id'))
             for p_likes, p_dislikes in zip_longest(likes, dislikes):
-                row = [d]
+                row = {'date': d}
                 if p_likes:
-                    row.append(p_likes['post'])
-                    row.append(p_likes['total'])
+                    row['post_id'] = p_likes['post']
+                    row['likes'] = p_likes['total']
                 else:
-                    row.append(p_dislikes['post'])
+                    row['post_id'] = p_dislikes['post']
                 if p_dislikes:
                     if p_likes and p_likes['post'] == p_dislikes['post']:
-                        row.append(p_dislikes['total'])
+                        row['dislikes'] = p_dislikes['total']
                         rows.append(row)
                         continue
                     elif p_likes:
-                        row.append(0)
+                        row['dislikes'] = 0
                         rows.append(row)
-                        row = [d, p_dislikes['post'], 0, p_dislikes['total']]
+                        row = {'date': d, 'post_id': p_dislikes['post'], 'likes': 0, 'dislikes': p_dislikes['total']}
                         rows.append(row)
                         continue
                     else:
-                        row.append(0)
-                        row.append(p_dislikes['total'])
+                        row['likes'] = 0
+                        row['dislikes'] = p_dislikes['total']
                         rows.append(row)
                 else:
-                    row.append(0)
+                    row['dislikes'] = 0
                     rows.append(row)
 
-        return Response(PostLikeAnalyticsSerializer(data=rows).data)
+        serializer = PostLikeAnalyticsSerializer(data=rows, many=True)
+        assert serializer.is_valid()
+        return Response(serializer.data)
