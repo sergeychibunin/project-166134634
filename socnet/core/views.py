@@ -1,7 +1,9 @@
+from datetime import datetime
 from itertools import zip_longest
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.shortcuts import render
+from django.utils.timezone import make_aware
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -45,6 +47,7 @@ class PostLikeAnalyticsList(APIView):
         
         date_to = self.request.query_params.get('date_to', None)
         if date_to:
+            date_to = make_aware(datetime.strptime(date_to, '%Y-%m-%d'))  # TODO check
             likes_queryset = likes_queryset.filter(datetime__lte=date_to)
             dislikes_queryset = dislikes_queryset.filter(datetime__lte=date_to)
         

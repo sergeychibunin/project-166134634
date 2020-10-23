@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api/user/signup/', UserCreate.as_view(), name='signup'),
     path('api/post/', PostListCreate.as_view(), name='post'),
-    path('api/post/like/', PostLikeCreate.as_view()),
-    path('api/post/dislike/', PostDislikeCreate.as_view()),
-    path('api/analytics/', PostLikeAnalyticsList.as_view())
+    path('api/post/like/', PostLikeCreate.as_view(), name='post_like'),
+    path('api/post/dislike/', PostDislikeCreate.as_view(), name='post_dislike'),
+    path('api/analytics/', PostLikeAnalyticsList.as_view(), name='post_report')
 ]
