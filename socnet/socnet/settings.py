@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'core.middleware.user_auth_mw'
+    'core.middleware.user_last_activity_mw'
 ]
 
 ROOT_URLCONF = 'socnet.urls'
