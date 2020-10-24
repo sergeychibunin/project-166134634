@@ -15,3 +15,9 @@ class PostLike(models.Model):
 class PostDislike(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     datetime = models.DateTimeField('The date of a dislike', auto_now_add=True)
+
+
+class Member(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    last_login = models.DateTimeField('The date of user\'s log-in')
+    last_request = models.DateTimeField('The date of the last request of a user')
