@@ -115,7 +115,17 @@ class UserActivityTestCase(APITestCase):
         p_like.save()
         response = self.client.get(
             reverse('post_report'),
-            # {'date_from': (now() - datetime.timedelta(1)).strftime('%Y-%m-%d'),
-            { 'date_to': (now() + datetime.timedelta(1)).strftime('%Y-%m-%d')}
+            {'date_from': (now() - datetime.timedelta(1)).strftime('%Y-%m-%d'),
+             'date_to': (now() + datetime.timedelta(1)).strftime('%Y-%m-%d')}
         )
-        import pdb; pdb.set_trace()
+        
+        r1 = response.data[0]
+        self.assertEqual(r1['date'], now().strftime('%Y-%m-%d'))
+        self.assertEqual(r1['post_id'], response1.data['id'])
+        self.assertEqual(r1['likes'], 2)
+        self.assertEqual(r1['dislikes'], 1)
+        r2 = response.data[1]
+        self.assertEqual(r2['date'], now().strftime('%Y-%m-%d'))
+        self.assertEqual(r2['post_id'], response2.data['id'])
+        self.assertEqual(r2['likes'], 2)
+        self.assertEqual(r2['dislikes'], 0)

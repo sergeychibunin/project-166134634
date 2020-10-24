@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.shortcuts import render
 from django.utils.timezone import make_aware
 from rest_framework import generics
+from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -42,12 +43,19 @@ class PostLikeAnalyticsList(APIView):
         
         date_from = self.request.query_params.get('date_from', None)
         if date_from:
+            try:
+                date_from = make_aware(datetime.strptime(date_from, '%Y-%m-%d'))
+            except ValueError:
+                raise ValidationError()
             likes_queryset = likes_queryset.filter(datetime__gte=date_from)
             dislikes_queryset = dislikes_queryset.filter(datetime__gte=date_from)
         
         date_to = self.request.query_params.get('date_to', None)
         if date_to:
-            date_to = make_aware(datetime.strptime(date_to, '%Y-%m-%d'))  # TODO check
+            try:
+                date_to = make_aware(datetime.strptime(date_to, '%Y-%m-%d'))
+            except ValueError:
+                raise ValidationError()
             likes_queryset = likes_queryset.filter(datetime__lte=date_to)
             dislikes_queryset = dislikes_queryset.filter(datetime__lte=date_to)
         
