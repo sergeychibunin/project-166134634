@@ -63,3 +63,8 @@ class PostLikeAnalyticsSerializer(serializers.Serializer):
     post_id = serializers.IntegerField()
     likes = serializers.IntegerField()
     dislikes = serializers.IntegerField()
+
+
+class UserActivitySerializer(serializers.Serializer):
+    last_login = serializers.DateTimeField()
+    last_request = serializers.DateTimeField()

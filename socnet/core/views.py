@@ -4,15 +4,33 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 from django.shortcuts import render
 from django.utils.timezone import make_aware
+from django.utils.timezone import now
 from rest_framework import generics
 from rest_framework.serializers import ValidationError
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.views import \
+    TokenObtainPairView
 from core.serializers import UserSerializer, PostSerializer, PostLikeSerializer, \
-    PostDislikeSerializer, PostLikeAnalyticsSerializer
+    PostDislikeSerializer, PostLikeAnalyticsSerializer, UserActivitySerializer
 from core.models import Post, PostLike, PostDislike
 
+
+class LoginView(TokenObtainPairView):
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == status.HTTP_200_OK:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid()
+            user = serializer.user
+            user.last_login = now()
+            user.save()
+
+        return response
 
 class UserCreate(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -97,5 +115,16 @@ class PostLikeAnalyticsList(APIView):
                     rows.append(row)
 
         serializer = PostLikeAnalyticsSerializer(data=rows, many=True)
+        assert serializer.is_valid()
+        return Response(serializer.data)
+
+
+class UserActivityView(APIView):
+
+    def get(self, request):
+        row = {}
+        row['last_login'] = request.user.last_login
+        row['last_request'] = request.user.member.last_request
+        serializer = UserActivitySerializer(data=row)
         assert serializer.is_valid()
         return Response(serializer.data)
