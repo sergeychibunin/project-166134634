@@ -15,7 +15,7 @@ from rest_framework_simplejwt.views import \
     TokenObtainPairView
 from core.serializers import UserSerializer, PostSerializer, PostLikeSerializer, \
     PostDislikeSerializer, PostLikeAnalyticsSerializer, UserActivitySerializer
-from core.models import Post, PostLike, PostDislike
+from core.models import Post, PostLike, PostDislike, Member
 
 
 class LoginView(TokenObtainPairView):
@@ -28,6 +28,11 @@ class LoginView(TokenObtainPairView):
             serializer.is_valid()
             user = serializer.user
             user.last_login = now()
+            try:
+                user.member.last_request = user.last_login
+            except AttributeError:
+                member = Member(user=user, last_request=user.last_login)
+                member.save()
             user.save()
 
         return response
