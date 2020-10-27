@@ -53,7 +53,7 @@ def rand_user() -> Dict[str, str]:
     Make a couple of a random username and a random password
     """
     return {
-        'username': f'user{str(int(time.time()))}',
+        'username': f'user{int(time.time())}{random.randint(0, 10000)}',
         'password': str(int(time.time()))}
 
 
@@ -61,7 +61,7 @@ def signup(user: Dict[str, str]) -> None:
     """
     Sign up a new user
     """
-    requests.post(f'{store.srv_uri}/api/user/signup', data=user)
+    requests.post(f'{store.srv_uri}/api/user/signup/', data=user)
 
 
 def login(user_number: int) -> None:
@@ -97,26 +97,26 @@ def write_posts(post_limit: int) -> None:
                 data={'body': post_body},
                 auth=BearerAuth(store.users[user_number]['token']))
             store.posts.append(response.json()['id'])
-            print(f"User {store.users[user_number]} has posted \"{post_body}\"")
+            print(f"User {store.users[user_number]['username']} has posted \"{post_body}\"")
 
 
 def add_likes(likes_limit: int) -> None:
     """
     Add likes to anywhere
     """
-    for user_number in range(store.users):
+    for user_number in range(len(store.users)):
         liked_posts = []
         try:
             for _ in range(random.randint(0, likes_limit)):
                 post_id = random.choice(store.posts)
-                while post_id in likes_limit:
+                while post_id in liked_posts:
                     post_id = random.choice(store.posts)
                     if len(store.posts) == len(liked_posts):
                         raise BreakExc()
 
                 urls = (
-                    ('/api/post/like', 'like'),
-                    ('/api/post/dislike', 'dislike')
+                    ('/api/post/like/', 'like'),
+                    ('/api/post/dislike/', 'dislike')
                 )
                 rnd_int = random.randint(0, 1)
                 requests.post(
@@ -124,7 +124,7 @@ def add_likes(likes_limit: int) -> None:
                     data={'post_id': post_id},
                     auth=BearerAuth(store.users[user_number]['token']))
                 liked_posts.append(post_id)
-                print(f"User a {urls[rnd_int][1]} to the post ID {post_id}")
+                print(f"User {store.users[user_number]['username']} has added a {urls[rnd_int][1]} to the post ID {post_id}")
         except BreakExc:
             continue
 
@@ -134,8 +134,8 @@ def main() -> None:
     config.read('bot.ini')
     cfg_srv_init(config['network'])
     add_users(int(config['behavior']['number_of_users']))
-    write_posts(config['behavior']['max_posts_per_user'])
-    add_likes(config['behavior']['max_likes_per_user'])
+    write_posts(int(config['behavior']['max_posts_per_user']))
+    add_likes(int(config['behavior']['max_likes_per_user']))
 
 
 if __name__ == "__main__":
